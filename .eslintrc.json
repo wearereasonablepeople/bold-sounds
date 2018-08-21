@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": ["warp/node", "warp/es6"],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "rules": {
+    "camelcase": 0,
+    "global-require": 0,
+    "no-sync": 0,
+    "strict": 0
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "bold-sounds",
+  "version": "0.0.1",
+  "description": "Play ambient and effect sounds for the game",
+  "main": "dist/bold-sounds.cjs.js",
+  "module": "dist/bold-sounds.esm.js",
+  "browser": "dist/bold-sounds.umd.js",
+  "scripts": {
+    "build": "npm run build:sprites && npm run build:module && npm run build:example",
+    "build:module": "rollup -c",
+    "build:sprites": "node build-sprites.js",
+    "build:example": "cp dist/sprites.* example/build/audio/ && rollup -c example/rollup.config.js",
+    "dev": "rollup -c example/rollup.config.js -w",
+    "lint": "eslint . --fix"
+  },
+  "dependencies": {
+    "howler": "^2.0.14"
+  },
+  "devDependencies": {
+    "audiosprite": "^0.7.1",
+    "eslint": "^5.4.0",
+    "eslint-config-warp": "^3.0.0",
+    "rollup": "^0.64.1",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-commonjs": "^9.1.5",
+    "rollup-plugin-node-resolve": "^3.3.0"
+  },
+  "license": "MIT"
+}
