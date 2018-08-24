@@ -21,7 +21,7 @@ boldSounds.init()
 function addButton(text, eventListener){
   // 1. Create the button
   var button = document.createElement("button");
-  button.innerHTML = text
+  button.innerHTML = text;
 
 // 2. Append somewhere
   var body = document.getElementsByTagName("body")[0];
