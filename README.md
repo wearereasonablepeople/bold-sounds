@@ -50,3 +50,11 @@ Requires `ffmpeg` to build sprites
 brew install ffmpeg --with-theora --with-libvorbis
 npm run build
 ```
+
+## Sounds loudness normalization
+
+For normalizing loudness we can use `ffmpeg-normalize` tool
+```
+pip3 install ffmpeg-normalize
+ffmpeg-normalize sounds/* -of ./sounds-normalized -ext wav -f -t -16
+```
