@@ -3127,6 +3127,7 @@
 	    var sound = ref.sound;
 	  if (state.ambience) {
 	    sound.fade(1, 0, FADE_DURATION, state.ambience);
+	    sound.once('fade', function (id) { return sound.stop(id); }, state.ambience);
 	  }
 	  if (state.steps) {
 	    sound.stop(state.steps);
@@ -3156,14 +3157,14 @@
 	    sound.volume(lowerVolume, state.steps);
 	  }
 	  var effectId = sound.play(sprite);
-	  setTimeout(function () {
+	  sound.once('end', function () {
 	    if (state.ambience) {
 	      sound.fade(lowerVolume, 1, FADE_DURATION, state.ambience);
 	    }
 	    if (state.steps) {
 	      sound.fade(lowerVolume, 1, FADE_DURATION, state.steps);
 	    }
-	  }, sound.duration(effectId) * 1000);
+	  }, effectId);
 	};
 
 	BoldSounds.prototype.play = function play (sprite) {
@@ -3188,11 +3189,6 @@
 	    var publicPath = ref.publicPath;
 	  return new Promise(function (resolve, reject) {
 	    howlOpts.src = howlOpts.src.map(function (url) { return ("" + publicPath + url); });
-	    howlOpts.onfade = function (id) {
-	      if (this$1.sound.volume(id) === 0) {
-	        this$1.sound.stop(id);
-	      }
-	    };
 	    howlOpts.onload = resolve;
 	    howlOpts.onloaderror = reject;
 	    this$1.sound = new howler_2(howlOpts);

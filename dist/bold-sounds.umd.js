@@ -3007,104 +3007,104 @@
 	var howler_2 = howler.Howl;
 
 	var howlOpts = {
-		"sprite": {
-			"ambience-city": [
-				0,
-				65482.01814058957
-			],
-			"ambience-default": [
-				67000,
-				29768.730158730166
-			],
-			"ambience-game": [
-				98000,
-				11145.578231292518
-			],
-			"ambience-park": [
-				111000,
-				30321.224489795924
-			],
-			"ambience-pier": [
-				143000,
-				16823.60544217687
-			],
-			"badge": [
-				161000,
-				2608.1405895691605
-			],
-			"chipcard-link": [
-				165000,
-				314.6712018140647
-			],
-			"chipcard-print": [
-				167000,
-				1776.7800453514724
-			],
-			"click": [
-				170000,
-				45.89569160998508
-			],
-			"collect-item": [
-				172000,
-				1266.4399092970484
-			],
-			"hint": [
-				175000,
-				4000
-			],
-			"hit-good": [
-				180000,
-				679.2063492063392
-			],
-			"hit": [
-				182000,
-				609.5238095238074
-			],
-			"horse-snort": [
-				184000,
-				702.9931972789143
-			],
-			"paper": [
-				186000,
-				1001.2471655328739
-			],
-			"pen": [
-				189000,
-				932.9251700680175
-			],
-			"phone-vibration": [
-				191000,
-				4224.64852607709
-			],
-			"scan-barcode": [
-				197000,
-				301.8594104308363
-			],
-			"seagals": [
-				199000,
-				7558.163265306121
-			],
-			"steps-on-grass": [
-				208000,
-				3788.3446712018267
-			],
-			"steps-on-stone": [
-				213000,
-				4236.417233560104
-			],
-			"time-is-almost-up": [
-				219000,
-				9519.818594104323
-			],
-			"trash": [
-				230000,
-				2497.936507936515
-			]
-		},
-		"src": [
-			"sprites.webm",
-			"sprites.mp3"
-		]
+	  sprite: {
+	    'ambience-city': [
+	      0,
+	      65482.01814058957
+	    ],
+	    'ambience-default': [
+	      67000,
+	      29768.730158730166
+	    ],
+	    'ambience-game': [
+	      98000,
+	      11145.578231292518
+	    ],
+	    'ambience-park': [
+	      111000,
+	      30321.224489795924
+	    ],
+	    'ambience-pier': [
+	      143000,
+	      16823.60544217687
+	    ],
+	    'badge': [
+	      161000,
+	      2608.1405895691605
+	    ],
+	    'chipcard-link': [
+	      165000,
+	      314.6712018140647
+	    ],
+	    'chipcard-print': [
+	      167000,
+	      1776.7800453514724
+	    ],
+	    'click': [
+	      170000,
+	      45.89569160998508
+	    ],
+	    'collect-item': [
+	      172000,
+	      1266.4399092970484
+	    ],
+	    'hint': [
+	      175000,
+	      4000
+	    ],
+	    'hit-good': [
+	      180000,
+	      679.2063492063392
+	    ],
+	    'hit': [
+	      182000,
+	      609.5238095238074
+	    ],
+	    'horse-snort': [
+	      184000,
+	      702.9931972789143
+	    ],
+	    'paper': [
+	      186000,
+	      1001.2471655328739
+	    ],
+	    'pen': [
+	      189000,
+	      932.9251700680175
+	    ],
+	    'phone-vibration': [
+	      191000,
+	      4224.64852607709
+	    ],
+	    'scan-barcode': [
+	      197000,
+	      301.8594104308363
+	    ],
+	    'seagals': [
+	      199000,
+	      7558.163265306121
+	    ],
+	    'steps-on-grass': [
+	      208000,
+	      3788.3446712018267
+	    ],
+	    'steps-on-stone': [
+	      213000,
+	      4236.417233560104
+	    ],
+	    'time-is-almost-up': [
+	      219000,
+	      9519.818594104323
+	    ],
+	    'trash': [
+	      230000,
+	      2497.936507936515
+	    ]
+	  },
+	  src: [
+	    'sprites.webm',
+	    'sprites.mp3'
+	  ]
 	};
 
 	var DEFAULT_AMBIENCE = 'ambience-default';
@@ -3127,6 +3127,7 @@
 	    var sound = ref.sound;
 	  if (state.ambience) {
 	    sound.fade(1, 0, FADE_DURATION, state.ambience);
+	    sound.once('fade', function (id) { return sound.stop(id); }, state.ambience);
 	  }
 	  if (state.steps) {
 	    sound.stop(state.steps);
@@ -3156,14 +3157,14 @@
 	    sound.volume(lowerVolume, state.steps);
 	  }
 	  var effectId = sound.play(sprite);
-	  setTimeout(function () {
+	  sound.once('end', function () {
 	    if (state.ambience) {
 	      sound.fade(lowerVolume, 1, FADE_DURATION, state.ambience);
 	    }
 	    if (state.steps) {
 	      sound.fade(lowerVolume, 1, FADE_DURATION, state.steps);
 	    }
-	  }, sound.duration(effectId) * 1000);
+	  }, effectId);
 	};
 
 	BoldSounds.prototype.play = function play (sprite) {
@@ -3188,11 +3189,6 @@
 	    var publicPath = ref.publicPath;
 	  return new Promise(function (resolve, reject) {
 	    howlOpts.src = howlOpts.src.map(function (url) { return ("" + publicPath + url); });
-	    howlOpts.onfade = function (id) {
-	      if (this$1.sound.volume(id) === 0) {
-	        this$1.sound.stop(id);
-	      }
-	    };
 	    howlOpts.onload = resolve;
 	    howlOpts.onloaderror = reject;
 	    this$1.sound = new howler_2(howlOpts);

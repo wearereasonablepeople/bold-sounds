@@ -20,6 +20,7 @@ class BoldSounds {
     const {state, sound} = this;
     if (state.ambience) {
       sound.fade(1, 0, FADE_DURATION, state.ambience);
+      sound.once('fade', id => sound.stop(id), state.ambience);
     }
     if (state.steps) {
       sound.stop(state.steps);
@@ -45,14 +46,14 @@ class BoldSounds {
       sound.volume(lowerVolume, state.steps);
     }
     const effectId = sound.play(sprite);
-    setTimeout(() => {
+    sound.once('end', () => {
       if (state.ambience) {
         sound.fade(lowerVolume, 1, FADE_DURATION, state.ambience);
       }
       if (state.steps) {
         sound.fade(lowerVolume, 1, FADE_DURATION, state.steps);
       }
-    }, sound.duration(effectId) * 1000);
+    }, effectId);
   }
 
   play(sprite) {
@@ -74,11 +75,6 @@ class BoldSounds {
     const {publicPath} = this;
     return new Promise((resolve, reject) => {
       howlOpts.src = howlOpts.src.map(url => `${publicPath}${url}`);
-      howlOpts.onfade = id => {
-        if (this.sound.volume(id) === 0) {
-          this.sound.stop(id);
-        }
-      };
       howlOpts.onload = resolve;
       howlOpts.onloaderror = reject;
       this.sound = new Howl(howlOpts);
