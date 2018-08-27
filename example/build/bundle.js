@@ -3116,7 +3116,7 @@
 	  // Change global volume.
 	  howler_1.volume((opts && opts.volume) || 0.8);
 
-	  this.publicPath = (opts && opts.publicPath) || '';
+	  this.src = (opts && opts.src) || '';
 	  this.state = {steps: null, ambience: null};
 	  this.sound = null;
 	};
@@ -3186,16 +3186,18 @@
 	    var this$1 = this;
 
 	  var ref = this;
-	    var publicPath = ref.publicPath;
+	    var src = ref.src;
 	  return new Promise(function (resolve, reject) {
-	    howlOpts.src = howlOpts.src.map(function (url) { return ("" + publicPath + url); });
+	    if (src) {
+	      howlOpts.src = src;
+	    }
 	    howlOpts.onload = resolve;
 	    howlOpts.onloaderror = reject;
 	    this$1.sound = new howler_2(howlOpts);
 	  });
 	};
 
-	var boldSounds = new BoldSounds({publicPath: '/audio/'});
+	var boldSounds = new BoldSounds({src: ['/audio/sprites.mp3', '/audio/sprites.webm']});
 
 	boldSounds.init()
 	.then(function(){

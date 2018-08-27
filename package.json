@@ -8,7 +8,7 @@
   "scripts": {
     "build": "npm run build:sprites && npm run build:module && npm run build:example",
     "build:module": "rollup -c",
-    "build:sprites": "node build-sprites.js",
+    "build:sprites": "node build-sprites.js && eslint src/sprites.js --fix",
     "build:example": "cp dist/sprites.* example/build/audio/ && rollup -c example/rollup.config.js",
     "dev:watch": "rollup -c example/rollup.config.js -w",
     "dev:serve": "npx serve example/build",

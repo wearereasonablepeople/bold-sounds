@@ -11,7 +11,7 @@ class BoldSounds {
     // Change global volume.
     Howler.volume((opts && opts.volume) || 0.8);
 
-    this.publicPath = (opts && opts.publicPath) || '';
+    this.src = (opts && opts.src) || '';
     this.state = {steps: null, ambience: null};
     this.sound = null;
   }
@@ -72,9 +72,11 @@ class BoldSounds {
   }
 
   init() {
-    const {publicPath} = this;
+    const {src} = this;
     return new Promise((resolve, reject) => {
-      howlOpts.src = howlOpts.src.map(url => `${publicPath}${url}`);
+      if (src) {
+        howlOpts.src = src;
+      }
       howlOpts.onload = resolve;
       howlOpts.onloaderror = reject;
       this.sound = new Howl(howlOpts);

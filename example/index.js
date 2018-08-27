@@ -1,7 +1,7 @@
 import BoldSounds from '../src/'
 import howlOpts from '../src/sprites'
 
-var boldSounds = new BoldSounds({publicPath: '/audio/'})
+var boldSounds = new BoldSounds({src: ['/audio/sprites.mp3', '/audio/sprites.webm']})
 
 boldSounds.init()
 .then(function(){

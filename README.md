@@ -18,7 +18,7 @@ Module to play ambient and effect sounds for the game.
 
 ```javascript
 import BoldSounds from 'bold-sounds';
-const boldSounds = new BoldSounds({publicPath: '/build/audio'});
+const boldSounds = new BoldSounds({src: ['/audio/sprites.mp3', '/audio/sprites.webm']});
 
 boldSounds.init()
 .then(() => {

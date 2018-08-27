@@ -110,7 +110,7 @@ var BoldSounds = function BoldSounds(opts) {
   // Change global volume.
   Howler.volume((opts && opts.volume) || 0.8);
 
-  this.publicPath = (opts && opts.publicPath) || '';
+  this.src = (opts && opts.src) || '';
   this.state = {steps: null, ambience: null};
   this.sound = null;
 };
@@ -180,9 +180,11 @@ BoldSounds.prototype.init = function init () {
     var this$1 = this;
 
   var ref = this;
-    var publicPath = ref.publicPath;
+    var src = ref.src;
   return new Promise(function (resolve, reject) {
-    howlOpts.src = howlOpts.src.map(function (url) { return ("" + publicPath + url); });
+    if (src) {
+      howlOpts.src = src;
+    }
     howlOpts.onload = resolve;
     howlOpts.onloaderror = reject;
     this$1.sound = new Howl(howlOpts);
