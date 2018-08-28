@@ -2,6 +2,7 @@ import {Howl, Howler} from 'howler';
 import howlOpts from './sprites';
 
 const DEFAULT_AMBIENCE = 'ambience-default';
+const END_OF_GAME = 'end-of-game'
 const FADE_DURATION = 2000;
 const isAmbience = sprite => sprite.includes('ambience');
 const isSteps = sprite => sprite.includes('steps');
@@ -16,7 +17,7 @@ class BoldSounds {
     this.sound = null;
   }
 
-  playAmbience(sprite) {
+  playAmbience(sprite, loop = true) {
     const {state, sound} = this;
     if (state.ambience) {
       sound.fade(1, 0, FADE_DURATION, state.ambience);
@@ -27,7 +28,7 @@ class BoldSounds {
     }
     state.ambience = sound.play(sprite);
     sound.fade(0, 1, FADE_DURATION, state.ambience);
-    sound.loop(true, state.ambience);
+    sound.loop(loop, state.ambience);
   }
 
   playSteps(sprite) {
@@ -62,6 +63,8 @@ class BoldSounds {
     } else if (isSteps(sprite)) {
       this.playAmbience(DEFAULT_AMBIENCE);
       this.playSteps(sprite);
+    } else if(sprite === END_OF_GAME) {
+      this.playAmbience(END_OF_GAME, false);
     } else {
       this.playEffect(sprite);
     }
