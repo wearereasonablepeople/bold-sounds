@@ -117,17 +117,17 @@ var BoldSounds = function BoldSounds(opts) {
   // Change global volume.
   howler.Howler.volume((opts && opts.volume) || 0.8);
 
-  this.src = (opts && opts.src) || '';
-  this.state = {steps: null, ambience: null};
-  this.sound = null;
+  this._src = (opts && opts.src) || '';
+  this._state = {steps: null, ambience: null};
+  this._sound = null;
 };
 
 BoldSounds.prototype.playAmbience = function playAmbience (sprite, loop) {
     if ( loop === void 0 ) loop = true;
 
   var ref = this;
-    var state = ref.state;
-    var sound = ref.sound;
+    var state = ref._state;
+    var sound = ref._sound;
   if (state.ambience) {
     sound.fade(1, 0, FADE_DURATION, state.ambience);
     sound.once('fade', function (id) { return sound.stop(id); }, state.ambience);
@@ -142,16 +142,16 @@ BoldSounds.prototype.playAmbience = function playAmbience (sprite, loop) {
 
 BoldSounds.prototype.playSteps = function playSteps (sprite) {
   var ref = this;
-    var state = ref.state;
-    var sound = ref.sound;
+    var state = ref._state;
+    var sound = ref._sound;
   state.steps = sound.play(sprite);
   sound.loop(true, state.steps);
 };
 
 BoldSounds.prototype.playEffect = function playEffect (sprite) {
   var ref = this;
-    var state = ref.state;
-    var sound = ref.sound;
+    var state = ref._state;
+    var sound = ref._sound;
   var lowerVolume = 0.4;
   if (state.ambience) {
     sound.volume(lowerVolume, state.ambience);
@@ -184,21 +184,21 @@ BoldSounds.prototype.play = function play (sprite) {
 };
 
 BoldSounds.prototype.mute = function mute (isMuted) {
-  this.sound.mute(isMuted);
+  this._sound.mute(isMuted);
 };
 
 BoldSounds.prototype.init = function init () {
     var this$1 = this;
 
   var ref = this;
-    var src = ref.src;
+    var src = ref._src;
   return new Promise(function (resolve, reject) {
     if (src) {
       howlOpts.src = src;
     }
     howlOpts.onload = resolve;
     howlOpts.onloaderror = reject;
-    this$1.sound = new howler.Howl(howlOpts);
+    this$1._sound = new howler.Howl(howlOpts);
   });
 };
 

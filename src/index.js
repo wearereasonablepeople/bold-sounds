@@ -12,13 +12,13 @@ class BoldSounds {
     // Change global volume.
     Howler.volume((opts && opts.volume) || 0.8);
 
-    this.src = (opts && opts.src) || '';
-    this.state = {steps: null, ambience: null};
-    this.sound = null;
+    this._src = (opts && opts.src) || '';
+    this._state = {steps: null, ambience: null};
+    this._sound = null;
   }
 
   playAmbience(sprite, loop = true) {
-    const {state, sound} = this;
+    const {_state: state, _sound: sound} = this;
     if (state.ambience) {
       sound.fade(1, 0, FADE_DURATION, state.ambience);
       sound.once('fade', id => sound.stop(id), state.ambience);
@@ -32,13 +32,13 @@ class BoldSounds {
   }
 
   playSteps(sprite) {
-    const {state, sound} = this;
+    const {_state: state, _sound: sound} = this;
     state.steps = sound.play(sprite);
     sound.loop(true, state.steps);
   }
 
   playEffect(sprite) {
-    const {state, sound} = this;
+    const {_state: state, _sound: sound} = this;
     const lowerVolume = 0.4;
     if (state.ambience) {
       sound.volume(lowerVolume, state.ambience);
@@ -71,18 +71,18 @@ class BoldSounds {
   }
 
   mute(isMuted) {
-    this.sound.mute(isMuted);
+    this._sound.mute(isMuted);
   }
 
   init() {
-    const {src} = this;
+    const {_src: src} = this;
     return new Promise((resolve, reject) => {
       if (src) {
         howlOpts.src = src;
       }
       howlOpts.onload = resolve;
       howlOpts.onloaderror = reject;
-      this.sound = new Howl(howlOpts);
+      this._sound = new Howl(howlOpts);
     });
   }
 }
