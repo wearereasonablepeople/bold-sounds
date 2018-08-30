@@ -107,17 +107,23 @@ var howlOpts = {
   ]
 };
 
-var DEFAULT_AMBIENCE = 'ambience-default';
-var END_OF_GAME = 'end-of-game';
-var FADE_DURATION = 2000;
+var defaultOpts = {
+  ambienceCrossFadeDuration: 4000,
+  afterEffectFadeInDuration: 2000,
+  endOfGame: 'end-of-game',
+  defaultAmbience: 'ambience-default',
+  volume: 0.8
+};
+
 var isAmbience = function (sprite) { return sprite.includes('ambience'); };
 var isSteps = function (sprite) { return sprite.includes('steps'); };
 
 var BoldSounds = function BoldSounds(opts) {
-  // Change global volume.
-  howler.Howler.volume((opts && opts.volume) || 0.8);
+  if ( opts === void 0 ) opts = {};
 
-  this._src = (opts && opts.src) || '';
+  this._opts = Object.assign(defaultOpts, opts);
+  // Change global volume.
+  howler.Howler.volume(opts.volume);
   this._state = {steps: null, ambience: null};
   this._sound = null;
 };
@@ -128,15 +134,16 @@ BoldSounds.prototype.playAmbience = function playAmbience (sprite, loop) {
   var ref = this;
     var state = ref._state;
     var sound = ref._sound;
+    var opts = ref._opts;
   if (state.ambience) {
-    sound.fade(1, 0, FADE_DURATION, state.ambience);
+    sound.fade(1, 0, opts.ambienceCrossFadeDuration, state.ambience);
     sound.once('fade', function (id) { return sound.stop(id); }, state.ambience);
   }
   if (state.steps) {
     sound.stop(state.steps);
   }
   state.ambience = sound.play(sprite);
-  sound.fade(0, 1, FADE_DURATION, state.ambience);
+  sound.fade(0, 1, opts.ambienceCrossFadeDuration, state.ambience);
   sound.loop(loop, state.ambience);
 };
 
@@ -152,6 +159,7 @@ BoldSounds.prototype.playEffect = function playEffect (sprite) {
   var ref = this;
     var state = ref._state;
     var sound = ref._sound;
+    var opts = ref._opts;
   var lowerVolume = 0.4;
   if (state.ambience) {
     sound.volume(lowerVolume, state.ambience);
@@ -162,22 +170,24 @@ BoldSounds.prototype.playEffect = function playEffect (sprite) {
   var effectId = sound.play(sprite);
   sound.once('end', function () {
     if (state.ambience) {
-      sound.fade(lowerVolume, 1, FADE_DURATION, state.ambience);
+      sound.fade(lowerVolume, 1, opts.afterEffectFadeInDuration, state.ambience);
     }
     if (state.steps) {
-      sound.fade(lowerVolume, 1, FADE_DURATION, state.steps);
+      sound.fade(lowerVolume, 1, opts.afterEffectFadeInDuration, state.steps);
     }
   }, effectId);
 };
 
 BoldSounds.prototype.play = function play (sprite) {
+  var ref = this;
+    var opts = ref._opts;
   if (isAmbience(sprite)) {
     this.playAmbience(sprite);
   } else if (isSteps(sprite)) {
-    this.playAmbience(DEFAULT_AMBIENCE);
+    this.playAmbience(opts.defaultAmbience);
     this.playSteps(sprite);
-  } else if(sprite === END_OF_GAME) {
-    this.playAmbience(END_OF_GAME, false);
+  } else if(sprite === opts.endOfGame) {
+    this.playAmbience(opts.endOfGame, false);
   } else {
     this.playEffect(sprite);
   }
@@ -191,11 +201,9 @@ BoldSounds.prototype.init = function init () {
     var this$1 = this;
 
   var ref = this;
-    var src = ref._src;
+    var opts = ref._opts;
   return new Promise(function (resolve, reject) {
-    if (src) {
-      howlOpts.src = src;
-    }
+    howlOpts.src = opts.src;
     howlOpts.onload = resolve;
     howlOpts.onloaderror = reject;
     this$1._sound = new howler.Howl(howlOpts);

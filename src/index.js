@@ -1,33 +1,37 @@
 import {Howl, Howler} from 'howler';
 import howlOpts from './sprites';
 
-const DEFAULT_AMBIENCE = 'ambience-default';
-const END_OF_GAME = 'end-of-game'
-const FADE_DURATION = 2000;
+const defaultOpts = {
+  ambienceCrossFadeDuration: 4000,
+  afterEffectFadeInDuration: 2000,
+  endOfGame: 'end-of-game',
+  defaultAmbience: 'ambience-default',
+  volume: 0.8
+};
+
 const isAmbience = sprite => sprite.includes('ambience');
 const isSteps = sprite => sprite.includes('steps');
 
 class BoldSounds {
-  constructor(opts) {
+  constructor(opts = {}) {
+    this._opts = Object.assign(defaultOpts, opts);
     // Change global volume.
-    Howler.volume((opts && opts.volume) || 0.8);
-
-    this._src = (opts && opts.src) || '';
+    Howler.volume(opts.volume);
     this._state = {steps: null, ambience: null};
     this._sound = null;
   }
 
   playAmbience(sprite, loop = true) {
-    const {_state: state, _sound: sound} = this;
+    const {_state: state, _sound: sound, _opts: opts} = this;
     if (state.ambience) {
-      sound.fade(1, 0, FADE_DURATION, state.ambience);
+      sound.fade(1, 0, opts.ambienceCrossFadeDuration, state.ambience);
       sound.once('fade', id => sound.stop(id), state.ambience);
     }
     if (state.steps) {
       sound.stop(state.steps);
     }
     state.ambience = sound.play(sprite);
-    sound.fade(0, 1, FADE_DURATION, state.ambience);
+    sound.fade(0, 1, opts.ambienceCrossFadeDuration, state.ambience);
     sound.loop(loop, state.ambience);
   }
 
@@ -38,7 +42,7 @@ class BoldSounds {
   }
 
   playEffect(sprite) {
-    const {_state: state, _sound: sound} = this;
+    const {_state: state, _sound: sound, _opts: opts} = this;
     const lowerVolume = 0.4;
     if (state.ambience) {
       sound.volume(lowerVolume, state.ambience);
@@ -49,22 +53,23 @@ class BoldSounds {
     const effectId = sound.play(sprite);
     sound.once('end', () => {
       if (state.ambience) {
-        sound.fade(lowerVolume, 1, FADE_DURATION, state.ambience);
+        sound.fade(lowerVolume, 1, opts.afterEffectFadeInDuration, state.ambience);
       }
       if (state.steps) {
-        sound.fade(lowerVolume, 1, FADE_DURATION, state.steps);
+        sound.fade(lowerVolume, 1, opts.afterEffectFadeInDuration, state.steps);
       }
     }, effectId);
   }
 
   play(sprite) {
+    const {_opts: opts} = this;
     if (isAmbience(sprite)) {
       this.playAmbience(sprite);
     } else if (isSteps(sprite)) {
-      this.playAmbience(DEFAULT_AMBIENCE);
+      this.playAmbience(opts.defaultAmbience);
       this.playSteps(sprite);
-    } else if(sprite === END_OF_GAME) {
-      this.playAmbience(END_OF_GAME, false);
+    } else if(sprite === opts.endOfGame) {
+      this.playAmbience(opts.endOfGame, false);
     } else {
       this.playEffect(sprite);
     }
@@ -75,11 +80,9 @@ class BoldSounds {
   }
 
   init() {
-    const {_src: src} = this;
+    const {_opts: opts} = this;
     return new Promise((resolve, reject) => {
-      if (src) {
-        howlOpts.src = src;
-      }
+      howlOpts.src = opts.src;
       howlOpts.onload = resolve;
       howlOpts.onloaderror = reject;
       this._sound = new Howl(howlOpts);
