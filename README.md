@@ -38,8 +38,6 @@ boldSounds.init()
 
 - All `ambience-` sounds would play in a loop until a different ambience starts to play.
 
-- All `steps-` sounds would play until ambience starts to play.
-
 - All other sounds would just play once and can be combined with ambience or other sounds.
 
 ## Build
@@ -53,8 +51,12 @@ npm run build
 
 ## Sounds loudness normalization
 
-For normalizing loudness we can use `ffmpeg-normalize` tool
+- For normalizing loudness we can use `ffmpeg-normalize` tool
+- this command overwrites original file
+- for ambient sounds we use `-t -16`
+- for effect sounds we use `-t -10`
+
 ```
 pip3 install ffmpeg-normalize
-ffmpeg-normalize sounds/* -of ./sounds-normalized -ext wav -f -t -16
+ffmpeg-normalize sounds/input.wav -of ./sounds -ext wav -f -t -16
 ```

@@ -3008,101 +3008,85 @@
 
 	var howlOpts = {
 	  sprite: {
-	    'ambience-city': [
+	    'ambience-city-cafe': [
 	      0,
+	      40102.51700680272
+	    ],
+	    'ambience-city-center': [
+	      42000,
 	      65482.01814058957
 	    ],
-	    'ambience-default': [
-	      67000,
+	    'ambience-info': [
+	      109000,
 	      29768.730158730166
 	    ],
 	    'ambience-park': [
-	      98000,
+	      140000,
 	      30321.224489795924
 	    ],
 	    'ambience-pier': [
-	      130000,
+	      172000,
 	      16823.60544217687
 	    ],
 	    'ambience-wack-a-mole': [
-	      148000,
+	      190000,
 	      11145.578231292518
 	    ],
 	    'badge': [
-	      161000,
+	      203000,
 	      2608.1405895691605
 	    ],
-	    'chipcard-link': [
-	      165000,
-	      314.6712018140647
-	    ],
-	    'chipcard-print': [
-	      167000,
-	      1776.7800453514724
-	    ],
 	    'click': [
-	      170000,
+	      207000,
 	      45.89569160998508
 	    ],
 	    'collect-item': [
-	      172000,
-	      1266.4399092970484
+	      209000,
+	      1493.5600907029425
 	    ],
 	    'end-of-game': [
-	      175000,
+	      212000,
 	      14769.251700680286
 	    ],
 	    'hint': [
-	      191000,
+	      228000,
 	      4000
 	    ],
 	    'hit-good': [
-	      196000,
+	      233000,
 	      679.2063492063392
 	    ],
 	    'hit': [
-	      198000,
+	      235000,
 	      609.5238095238074
 	    ],
 	    'horse-snort': [
-	      200000,
+	      237000,
 	      702.9931972789143
 	    ],
-	    'paper': [
-	      202000,
-	      1001.2471655328739
+	    'id-scan': [
+	      239000,
+	      314.6712018140647
 	    ],
-	    'pen': [
-	      205000,
-	      932.9251700680175
+	    'ov-chipcard': [
+	      241000,
+	      549.3650793650886
+	    ],
+	    'paper-pen': [
+	      243000,
+	      1537.528344671216
 	    ],
 	    'phone-vibration': [
-	      207000,
+	      246000,
 	      4224.64852607709
 	    ],
-	    'scan-barcode': [
-	      213000,
-	      301.8594104308363
-	    ],
-	    'seagals': [
-	      215000,
-	      7558.163265306121
-	    ],
-	    'steps-on-grass': [
-	      224000,
-	      3788.3446712018267
-	    ],
-	    'steps-on-stone': [
-	      229000,
-	      4236.417233560104
+	    'smart-bin': [
+	      252000,
+	      2096.009070294798
 	    ],
 	    'time-is-almost-up': [
-	      235000,
+	      256000,
 	      9519.818594104323
-	    ],
-	    'trash': [
-	      246000,
-	      2497.936507936515
 	    ]
 	  },
 	  src: [
@@ -3114,13 +3098,12 @@
 	var defaultOpts = {
 	  ambienceCrossFadeDuration: 4000,
 	  afterEffectFadeInDuration: 2000,
-	  endOfGame: 'end-of-game',
-	  defaultAmbience: 'ambience-default',
+	  duringEffectVolume: 0.3,
 	  volume: 0.8
 	};
 
 	var isAmbience = function (sprite) { return sprite.includes('ambience'); };
-	var isSteps = function (sprite) { return sprite.includes('steps'); };
+	var isEndOfGame = function (sprite) { return sprite === 'end-of-game'; };
 
 	var BoldSounds = function BoldSounds(opts) {
 	  if ( opts === void 0 ) opts = {};
@@ -3128,7 +3111,7 @@
 	  this._opts = Object.assign(defaultOpts, opts);
 	  // Change global volume.
 	  howler_1.volume(opts.volume);
-	  this._state = {steps: null, ambience: null};
+	  this._state = {ambience: null};
 	  this._sound = null;
 	};
 
@@ -3143,20 +3126,9 @@
 	    sound.fade(1, 0, opts.ambienceCrossFadeDuration, state.ambience);
 	    sound.once('fade', function (id) { return sound.stop(id); }, state.ambience);
 	  }
-	  if (state.steps) {
-	    sound.stop(state.steps);
-	  }
 	  state.ambience = sound.play(sprite);
 	  sound.fade(0, 1, opts.ambienceCrossFadeDuration, state.ambience);
 	  sound.loop(loop, state.ambience);
-	};
-
-	BoldSounds.prototype.playSteps = function playSteps (sprite) {
-	  var ref = this;
-	    var state = ref._state;
-	    var sound = ref._sound;
-	  state.steps = sound.play(sprite);
-	  sound.loop(true, state.steps);
 	};
 
 	BoldSounds.prototype.playEffect = function playEffect (sprite) {
@@ -3164,34 +3136,35 @@
 	    var state = ref._state;
 	    var sound = ref._sound;
 	    var opts = ref._opts;
-	  var lowerVolume = 0.4;
+	  var lowerVolume = opts.duringEffectVolume;
 	  if (state.ambience) {
 	    sound.volume(lowerVolume, state.ambience);
-	  }
-	  if (state.steps) {
-	    sound.volume(lowerVolume, state.steps);
 	  }
 	  var effectId = sound.play(sprite);
 	  sound.once('end', function () {
 	    if (state.ambience) {
 	      sound.fade(lowerVolume, 1, opts.afterEffectFadeInDuration, state.ambience);
 	    }
-	    if (state.steps) {
-	      sound.fade(lowerVolume, 1, opts.afterEffectFadeInDuration, state.steps);
-	    }
 	  }, effectId);
 	};
 
-	BoldSounds.prototype.play = function play (sprite) {
+	BoldSounds.prototype.playEndOfGame = function playEndOfGame (sprite) {
 	  var ref = this;
+	    var state = ref._state;
+	    var sound = ref._sound;
 	    var opts = ref._opts;
+	  if (state.ambience) {
+	    sound.fade(1, 0, opts.ambienceCrossFadeDuration, state.ambience);
+	    sound.once('fade', function (id) { return sound.stop(id); }, state.ambience);
+	  }
+	  sound.play(sprite);
+	};
+
+	BoldSounds.prototype.play = function play (sprite) {
 	  if (isAmbience(sprite)) {
 	    this.playAmbience(sprite);
-	  } else if (isSteps(sprite)) {
-	    this.playAmbience(opts.defaultAmbience);
-	    this.playSteps(sprite);
-	  } else if(sprite === opts.endOfGame) {
-	    this.playAmbience(opts.endOfGame, false);
+	  } else if(isEndOfGame(sprite)) {
+	    this.playEndOfGame(sprite, false);
 	  } else {
 	    this.playEffect(sprite);
 	  }
