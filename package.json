@@ -29,5 +29,8 @@
     "rollup-plugin-node-resolve": "^3.3.0",
     "serve": "^10.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "/dist"
+  ]
 }
