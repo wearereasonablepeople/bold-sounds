@@ -1,6 +1,6 @@
 {
   "name": "bold-sounds",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Play ambient and effect sounds for the game",
   "main": "dist/bold-sounds.cjs.js",
   "module": "dist/bold-sounds.esm.js",
